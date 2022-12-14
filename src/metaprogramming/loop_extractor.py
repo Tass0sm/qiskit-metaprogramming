@@ -7,8 +7,7 @@ def is_loop(e):
     return any(map(lambda c: isinstance(e, c), loop_expressions))
 
 
-
-with open("./circuit.py", "r") as f:
+with open("./circuit1.py", "r") as f:
     circuit_program = f.read()
 
 prog_ast = ast.parse(circuit_program)
