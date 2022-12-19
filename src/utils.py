@@ -2,6 +2,12 @@ from qiskit.converters import circuit_to_dag
 import networkx as nx
 import pandas as pd
 import time
+import ast
+
+loop_expressions = [ast.For]
+
+def is_loop(e):
+    return any(map(lambda c: isinstance(e, c), loop_expressions))
 
 def is_gate_predicate(gate_name):
     return lambda i: i.operation.name == gate_name
