@@ -1,0 +1,69 @@
+
+* Loop Metaprogramming
+
+Only getting loops and manipulating them. Need to go further for
+optimization.
+
+#+begin_src python
+import src.metaprogramming.loop_nest
+import ast
+
+loop_text = """
+for i in range(3):
+    for j in range(4):
+        for k in range(5):
+            a += 1
+"""
+
+temp_ast = ast.parse(loop_text)
+loop_ast = temp_ast.body[0]
+loop_nest = src.metaprogramming.loop_nest.LoopNest(loop_ast)
+
+print(loop_nest)
+loop_nest.permute(0, 1)
+print(loop_nest)
+print(list(loop_nest.get_polyhedron(2)))
+#+end_src
+
+#+RESULTS:
+: for i in range(3):
+:     for j in range(4):
+:         for k in range(5):
+:             a += 1
+: for j in range(4):
+:     for i in range(3):
+:         for k in range(5):
+:             a += 1
+: [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 0, 3), (0, 1, 0),
+:  (0, 1, 1), (0, 1, 2), (0, 1, 3), (0, 2, 0), (0, 2, 1),
+:  (0, 2, 2), (0, 2, 3), (1, 0, 0), (1, 0, 1), (1, 0, 2),
+:  (1, 0, 3), (1, 1, 0), (1, 1, 1), (1, 1, 2), (1, 1, 3),
+:  (1, 2, 0), (1, 2, 1), (1, 2, 2), (1, 2, 3), (2, 0, 0),
+:  (2, 0, 1), (2, 0, 2), (2, 0, 3), (2, 1, 0), (2, 1, 1),
+:  (2, 1, 2), (2, 1, 3), (2, 2, 0), (2, 2, 1), (2, 2, 2),
+:  (2, 2, 3), (3, 0, 0), (3, 0, 1), (3, 0, 2), (3, 0, 3),
+:  (3, 1, 0), (3, 1, 1), (3, 1, 2), (3, 1, 3), (3, 2, 0),
+:  (3, 2, 1), (3, 2, 2), (3, 2, 3), (4, 0, 0), (4, 0, 1),
+:  (4, 0, 2), (4, 0, 3), (4, 1, 0), (4, 1, 1), (4, 1, 2),
+:  (4, 1, 3), (4, 2, 0), (4, 2, 1), (4, 2, 2), (4, 2, 3)]
+
+* ML Optimization
+
+For qubit allocation:
+1. encode circuit as adjacency matrix paired with vector describing gates at each vertex
+2. encode current logical-to-physical qubit mapping as another vector
+3. encode actions like swap insertion with some index into the
+   adjacency matrix and some other number representing the action.
+4. the network will take the circuit and current mapping and output an
+   action on the matrix with another, possibly modified mapping.
+5. the circuit will be modified according to the action and the output
+   mapping will also be fed into the circuit in the next step
+6. learning will be driven by a function on the circuit and mapping
+
+Resources:
+1. https://www.semanticscholar.org/paper/Qubit-allocation-Siraichi-Santos/5158dec16707ac7031d33727a077b4a703fc41ef
+
+Related:
+1. https://ist.psu.edu/research/projects/graph-optimization
+2. https://ai.googleblog.com/2020/04/chip-design-with-deep-reinforcement.html
+3. https://developer.nvidia.com/blog/designing-arithmetic-circuits-with-deep-reinforcement-learning/
